@@ -1,6 +1,4 @@
 import { useState, useRef ,useContext} from "react";
-import { auth } from "./firebase";
-import { createUserWithEmailAndPassword } from "firebase/auth";
 import { AuthContext } from "../Context/AuthContext";
 import { useNavigate } from "react-router-dom";
 import classes from "./AuthForm.module.css";
@@ -71,13 +69,15 @@ const AuthForm = () => {
         console.error("Signin failed!");
         console.error("Status:", response.status);
         console.error("Status text:", response.statusText);
-        console.error("Response body:", data);
       }
 
       const data = await response.json();
       console.log("User signedin :", data);
       authCtx.login(data.idToken, data.email, data.displayName || "Anonymous");
-      navigate("/")
+      if(data.idToken){
+        navigate("/")
+      }
+      
 
 
     } catch (error) {
