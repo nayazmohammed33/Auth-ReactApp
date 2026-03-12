@@ -36,6 +36,7 @@ const AuthForm = () => {
 
       const data = await response.json();
       console.log("User signed up:", data);
+       authCtx.login(data.idToken, data.email, data.displayName || "Anonymous");
       // data.idToken is your auth token
       // data.localId is the user’s UID
     } catch (error) {

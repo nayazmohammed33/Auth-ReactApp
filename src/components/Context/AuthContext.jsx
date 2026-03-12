@@ -1,35 +1,46 @@
-import React, { useState } from "react"
+import React, { useState, useEffect } from "react";
 
-export const AuthContext=React.createContext({
-    token:null,
-    email:null,
-    login:(token,name,email)=>{},
-    logout:()=>{},
-    changePassowrd:(token,password)=>{}
-})
+export const AuthContext = React.createContext({
+  token: null,
+  email: null,
+  login: (token, name, email) => {},
+  logout: () => {},
+  changePassword: (token, password) => {},
+});
 
+export const AuthProvider = ({ children }) => {
+  const [token, setToken] = useState(null);
+  const [email, setEmail] = useState(null);
 
-export const  AuthProvider =({children})=>{
-    const [token,setToken] =useState(null);
-    const [email, setEmail] =useState(null);
-
-
-    const login=(token,email)=>{
-        setToken(token);
-        setEmail(email);
-    
+  useEffect(() => {
+    const storedToken = localStorage.getItem("token");
+    const storedEmail = localStorage.getItem("email");
+    if (storedToken) {
+      setToken(storedToken);
     }
-
-    const logout=()=>{
-        setToken(null);
-        setEmail(null);
-        console.log("Token Cleared")
+    if (storedEmail) {
+      setEmail(storedEmail);
     }
+  }, []);
 
-    return(
-        <AuthContext.Provider value={{token,email,login,logout}} >
-            {children}
-        </AuthContext.Provider>
-    )
-}
+  const login = (token, email) => {
+    setToken(token);
+    setEmail(email);
+    localStorage.setItem("token", token);
+    localStorage.setItem("email", email);
+  };
+
+  const logout = () => {
+    setToken(null);
+    setEmail(null);
+    localStorage.removeItem("token");
+    localStorage.removeItem("email");
+  };
+
+  return (
+    <AuthContext.Provider value={{ token, email, login, logout }}>
+      {children}
+    </AuthContext.Provider>
+  );
+};
 
