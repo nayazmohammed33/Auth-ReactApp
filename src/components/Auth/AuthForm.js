@@ -1,13 +1,16 @@
-import { useState, useRef } from "react";
+import { useState, useRef ,useContext} from "react";
 import { auth } from "./firebase";
 import { createUserWithEmailAndPassword } from "firebase/auth";
-
+import { AuthContext } from "../Context/AuthContext";
+import { useNavigate } from "react-router-dom";
 import classes from "./AuthForm.module.css";
 
 const AuthForm = () => {
   const [isLogin, setIsLogin] = useState(true);
   const enteredMailRef = useRef();
   const enteredPasswordRef = useRef();
+  const authCtx = useContext(AuthContext);
+   const navigate = useNavigate();
 
   const submitHandler = async (e) => {
     e.preventDefault();
@@ -70,8 +73,13 @@ const AuthForm = () => {
         console.error("Status text:", response.statusText);
         console.error("Response body:", data);
       }
+
       const data = await response.json();
       console.log("User signedin :", data);
+      authCtx.login(data.idToken, data.email, data.displayName || "Anonymous");
+      navigate("/")
+
+
     } catch (error) {
       console.error("Signin error:", error.message);
       console.error("Full error:", error);
