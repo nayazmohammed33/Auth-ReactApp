@@ -30,15 +30,14 @@ const AuthForm = () => {
         },
       );
 
+      const data = await response.json();
+
       if (!response.ok) {
-        throw new Error("Signup failed!");
+        throw new Error(data.error.message);
       }
 
-      const data = await response.json();
       console.log("User signed up:", data);
-       authCtx.login(data.idToken, data.email, data.displayName || "Anonymous");
-      // data.idToken is your auth token
-      // data.localId is the user’s UID
+      authCtx.login(data.idToken, data.email, data.displayName || "Anonymous");
     } catch (error) {
       console.error("Signup error:", error.message);
     }
@@ -66,24 +65,20 @@ const AuthForm = () => {
           }),
         },
       );
-      if (!response.ok) {
-        console.error("Signin failed!");
-        console.error("Status:", response.status);
-        console.error("Status text:", response.statusText);
-      }
 
       const data = await response.json();
-      console.log("User signedin :", data);
+
+      if (!response.ok) {
+        throw new Error(data.error.message);
+      }
+
+      console.log("User signed in:", data);
       authCtx.login(data.idToken, data.email, data.displayName || "Anonymous");
       if(data.idToken){
         navigate("/")
       }
-      
-
-
     } catch (error) {
       console.error("Signin error:", error.message);
-      console.error("Full error:", error);
     }
   };
 

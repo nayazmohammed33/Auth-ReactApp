@@ -24,10 +24,23 @@ export const AuthProvider = ({ children }) => {
   }, []);
 
   const login = (token, email) => {
+    const now = new Date();
+    const item = {
+    value: token,
+    expiry: now.getTime() + 5 * 60 * 1000, // 5 minutes
+  };
     setToken(token);
     setEmail(email);
-    localStorage.setItem("token", token);
+    localStorage.setItem("authToken", JSON.stringify(item));
     localStorage.setItem("email", email);
+
+    setTimeout(() => {
+    localStorage.removeItem("authToken");
+    localStorage.removeItem("email");
+    setToken(null);
+    setEmail(null);
+    console.log("Token expired and cleared");
+  }, 5 * 60* 1000);
   };
 
   const logout = () => {
